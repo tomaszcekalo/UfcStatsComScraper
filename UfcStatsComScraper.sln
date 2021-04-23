@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UfcStatsComScraper", "UfcStatsComScraper\UfcStatsComScraper.csproj", "{8991817F-1CD7-4363-9AC0-4091F6F85148}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UfcStatsComScraper.ConsoleExample", "UfcStatsComScraper.ConsoleExample\UfcStatsComScraper.ConsoleExample.csproj", "{DD110E4D-FF33-4FFF-9444-7DBE3219592E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8991817F-1CD7-4363-9AC0-4091F6F85148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8991817F-1CD7-4363-9AC0-4091F6F85148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8991817F-1CD7-4363-9AC0-4091F6F85148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8991817F-1CD7-4363-9AC0-4091F6F85148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD110E4D-FF33-4FFF-9444-7DBE3219592E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD110E4D-FF33-4FFF-9444-7DBE3219592E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD110E4D-FF33-4FFF-9444-7DBE3219592E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD110E4D-FF33-4FFF-9444-7DBE3219592E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CDB5F9EE-B599-4102-A039-F505F6C2B403}
+	EndGlobalSection
+EndGlobal
