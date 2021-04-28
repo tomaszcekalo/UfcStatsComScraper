@@ -2,7 +2,9 @@
 using ScrapySharp.Network;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
+using ScrapySharp.Extensions;
 
 namespace UfcStatsComScraper
 {
@@ -45,7 +47,18 @@ namespace UfcStatsComScraper
         }
         public List<EventListItem> ParseUpcoming(HtmlNode node)
         {
-            var result = new List<EventListItem>();
+            var result = node.CssSelect(".b-fight-details__table-body tr")
+                .Select(ParseUpcomingItem)
+                .ToList();
+            return result;
+        }
+
+        public EventListItem ParseUpcomingItem(HtmlNode node)
+        {
+            var result = new EventListItem();
+            result.Href = node.Attributes["data-link"]
+                .Value;
+            result.
             return result;
         }
         public List<EventListItem> ScrapeCompleted(int? page = null)
