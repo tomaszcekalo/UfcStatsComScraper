@@ -1,10 +1,10 @@
 ﻿using HtmlAgilityPack;
+using ScrapySharp.Extensions;
 using ScrapySharp.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using ScrapySharp.Extensions;
 
 namespace UfcStatsComScraper
 {
@@ -48,17 +48,37 @@ namespace UfcStatsComScraper
         public List<EventListItem> ParseUpcoming(HtmlNode node)
         {
             var result = node.CssSelect(".b-fight-details__table-body tr")
-                .Select(ParseUpcomingItem)
+                .Select(ParseEventListItem)
                 .ToList();
             return result;
         }
 
-        public EventListItem ParseUpcomingItem(HtmlNode node)
+        public EventListItem ParseEventListItem(HtmlNode node)
         {
+            var i = node
+                .CssSelect("td.b-statistics__table-col i.b-statistics__table-content")
+                .FirstOrDefault();
+
             var result = new EventListItem();
-            result.Href = node.Attributes["data-link"]
+
+            result.Href = i?.CssSelect("a")
+                .FirstOrDefault()
+                ?.Attributes["href"]
                 .Value;
-            result.
+            result.Name = i?.CssSelect("a")
+                .FirstOrDefault()
+                ?.InnerText;
+            result.Date = i?.CssSelect("span")
+                .FirstOrDefault()
+                ?.InnerText
+                .Trim();
+            result.Location = node.CssSelect("td.b-statistics__table-col_style_big-top-padding")
+                .FirstOrDefault()
+                ?.InnerText
+                .Trim();
+            result.IsNext = node
+                .CssSelect("img.b-statistics__icon")
+                .Any();
             return result;
         }
         public List<EventListItem> ScrapeCompleted(int? page = null)
@@ -79,7 +99,9 @@ namespace UfcStatsComScraper
 
         public List<EventListItem> ParseCompleted(HtmlNode node)
         {
-            var result = new List<EventListItem>();
+            var result = node.CssSelect(".b-fight-details__table-body tr")
+                .Select(ParseEventListItem)
+                .ToList();
             return result;
         }
         public List<EventListItem> ScrapeSearch(string query)
@@ -96,7 +118,9 @@ namespace UfcStatsComScraper
         }
         public List<EventListItem> ParseSearch(HtmlNode node)
         {
-            var result = new List<EventListItem>();
+            var result = node.CssSelect(".b-fight-details__table-body tr")
+                .Select(ParseEventListItem)
+                .ToList();
             return result;
         }
     }
