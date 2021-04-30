@@ -7,6 +7,7 @@
         public const string UfcStatsEventsCompleted = UfcStatsEvents + "/completed";
         public const string UfcStatsEventsUpcoming = UfcStatsEvents + "/upcoming";
         public const string UfcStatsEventSearch = UfcStatsEvents + "/search";
+        public const string UfcStatsEventDetails = UfcStatsBase + "/event-details/";
         public const string UfcStatsFighters = "http://ufcstats.com/statistics/fighters";
     }
 }

@@ -45,7 +45,7 @@ namespace UfcStatsComScraper
             var result = new List<EventListItem>();
             return result;
         }
-        public List<EventListItem> ParseUpcoming(HtmlNode node)
+        public List<EventListItem> ParseEventList(HtmlNode node)
         {
             var result = node.CssSelect(".b-fight-details__table-body tr")
                 .Select(ParseEventListItem)
@@ -93,35 +93,25 @@ namespace UfcStatsComScraper
             uriBuilder.Query = query.ToString();
             var uri = uriBuilder.Uri;
             WebPage homePage = _browser.NavigateToPage(uri);
-            var result = ParseCompleted(homePage.Html);
+            var result = ParseEventList(homePage.Html);
             return result;
         }
 
-        public List<EventListItem> ParseCompleted(HtmlNode node)
-        {
-            var result = node.CssSelect(".b-fight-details__table-body tr")
-                .Select(ParseEventListItem)
-                .ToList();
-            return result;
-        }
         public List<EventListItem> ScrapeSearch(string query)
         {
             string url = Consts.UfcStatsEventSearch;
             var uriBuilder = new UriBuilder(url);
             var queryString = HttpUtility.ParseQueryString(uriBuilder.Query);
             queryString["page"] = "all";
-            uriBuilder.Query = query.ToString();
+            uriBuilder.Query = queryString.ToString();
             var uri = uriBuilder.Uri;
             WebPage homePage = _browser.NavigateToPage(uri);
-            var result = ParseSearch(homePage.Html);
+            var result = ParseEventList(homePage.Html);
             return result;
         }
-        public List<EventListItem> ParseSearch(HtmlNode node)
-        {
-            var result = node.CssSelect(".b-fight-details__table-body tr")
-                .Select(ParseEventListItem)
-                .ToList();
-            return result;
-        }
+
+        //public EventDetails ScrapeEventDetails(string id)
+        //{
+        //}
     }
 }
