@@ -13,6 +13,7 @@ namespace UfcStatsComScraper
         IEnumerable<EventListItem> ScrapeUpcoming(int? page = null);
         IEnumerable<EventListItem> ScrapeCompleted(int? page = null);
         IEnumerable<EventListItem> ScrapeSearch(string query);
+        EventDetails ScrapeEventDetails(string url);
     }
 
     public class UfcStatsScraper : IUfcStatsScraper
@@ -109,9 +110,8 @@ namespace UfcStatsComScraper
             return result;
         }
 
-        public EventDetails ScrapeEventDetails(string id)
+        public EventDetails ScrapeEventDetails(string url)
         {
-            string url = Consts.UfcStatsEventsCompleted + id;
             var uriBuilder = new UriBuilder(url);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             uriBuilder.Query = query.ToString();
@@ -123,10 +123,20 @@ namespace UfcStatsComScraper
 
         public EventDetails ParseEventDetails(HtmlNode node)
         {
-            var result = new EventDetails();
-            result.Fights = node.CssSelect(".b-fight-details__table-body tr")
-                .Select(ParseFightItem);
-
+            var listBoxItems = node
+                .CssSelect("ul.b-list__box-list li.b-list__box-list-item")
+                .Select(x => x.ChildNodes
+                    .Select(y => y.InnerText.Trim())
+                    .Where(y => !string.IsNullOrEmpty(y))
+                    .ToArray())
+                .ToDictionary(x => x[0], x => x[1]);
+            var result = new EventDetails
+            {
+                Fights = node.CssSelect(".b-fight-details__table-body tr")
+                    .Select(ParseFightItem),
+                Date = listBoxItems["Date:"],
+                Location = listBoxItems["Location:"]
+            };
             return result;
         }
 
