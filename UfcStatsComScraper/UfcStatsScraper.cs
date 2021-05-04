@@ -152,6 +152,30 @@ namespace UfcStatsComScraper
                 .CssSelect("a")
                 .Select(x => x.Attributes["href"].Value)
                 .FirstOrDefault();
+            result.KD = cells[2]
+                .CssSelect("p")
+                .Select(x => x.InnerText.Trim());
+            result.STR = cells[3]
+                .CssSelect("p")
+                .Select(x => x.InnerText.Trim());
+            result.TD = cells[4]
+                .CssSelect("p")
+                .Select(x => x.InnerText.Trim());
+            result.SUB = cells[5]
+                .CssSelect("p")
+                .Select(x => x.InnerText.Trim());
+            result.WeightClass = cells[6]
+                .InnerText
+                .Trim();
+            result.Method = cells[7]
+                .InnerText
+                .Trim();
+            result.Round = cells[8]
+                .InnerText
+                .Trim();
+            result.Time = cells[9]
+                .InnerText
+                .Trim();
             return result;
         }
 
