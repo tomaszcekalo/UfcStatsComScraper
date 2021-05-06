@@ -5,7 +5,7 @@ namespace UfcStatsComScraper
     public class FightDetails
     {
         public Link EventLink { get; set; }
-        private IEnumerable<FightDetailsFighter> Fighters { get; set; }
+        public IEnumerable<FightDetailsFighter> Fighters { get; set; }
         public string Title { get; set; }
         public string Method { get; set; }
         public string Round { get; set; }

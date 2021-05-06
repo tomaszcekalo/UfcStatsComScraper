@@ -14,6 +14,7 @@ namespace UfcStatsComScraper
         IEnumerable<EventListItem> ScrapeCompleted(int? page = null);
         IEnumerable<EventListItem> ScrapeSearch(string query);
         EventDetails ScrapeEventDetails(string url);
+        FightDetails ScrapeFightDetails(string url);
     }
 
     public class UfcStatsScraper : IUfcStatsScraper
@@ -112,12 +113,69 @@ namespace UfcStatsComScraper
 
         public EventDetails ScrapeEventDetails(string url)
         {
-            var uriBuilder = new UriBuilder(url);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            uriBuilder.Query = query.ToString();
-            var uri = uriBuilder.Uri;
-            WebPage homePage = _browser.NavigateToPage(uri);
+            WebPage homePage = _browser.NavigateToPage(new Uri(url));
             var result = ParseEventDetails(homePage.Html);
+            return result;
+        }
+
+        public FightDetails ScrapeFightDetails(string url)
+        {
+            WebPage homePage = _browser.NavigateToPage(new Uri(url));
+            var result = ParseFightDetails(homePage.Html);
+            return result;
+        }
+
+        private FightDetails ParseFightDetails(HtmlNode node)
+        {
+            var content = node
+                .CssSelect(".b-fight-details__content .b-fight-details__text")
+                .FirstOrDefault()
+                ?.ChildNodes
+                .Where(x => x.FirstChild != null)
+                .ToDictionary(x =>
+                    x.CssSelect(".b-fight-details__label")
+                        .FirstOrDefault()
+                        ?.InnerText.Trim(),
+                    x => x.ChildNodes
+                        .Select(y => y.InnerText.Trim())
+                        .LastOrDefault(y => !string.IsNullOrEmpty(y))
+                );
+            var result = new FightDetails
+            {
+                EventLink = node.CssSelect("h2.b-content__title a")
+                    .Select(ParseLink)
+                    .FirstOrDefault(),
+                Fighters = node.CssSelect(".b-fight-details__person")
+                    .Select(ParseFightDetailsFighter),
+                Title = node.CssSelect("i.b-fight-details__fight-title")
+                    .FirstOrDefault()
+                    ?.InnerText
+                    .Trim(),
+                Method = content["Method:"],
+                Round = content["Round:"],
+                Time = content["Time:"],
+                TimeFormat = content["Time format:"],
+                Referee = content["Referee:"]
+            };
+            return result;
+        }
+
+        public FightDetailsFighter ParseFightDetailsFighter(HtmlNode node)
+        {
+            var result = new FightDetailsFighter
+            {
+                Score = node.CssSelect(".b-fight-details__person-status")
+                    .FirstOrDefault()
+                    ?.InnerText
+                    .Trim(),
+                FighterDetailsLink = node.CssSelect(".b-link b-fight-details__person-link")
+                    .Select(ParseLink)
+                    .FirstOrDefault(),
+                Title = node.CssSelect("p.b-fight-details__person-title")
+                    .FirstOrDefault()
+                    ?.InnerText
+                    .Trim()
+            };
             return result;
         }
 
