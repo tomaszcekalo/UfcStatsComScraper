@@ -265,24 +265,26 @@ namespace UfcStatsComScraper
                 .ToDictionary(x => x[0], x => x[1]);
 
 
-            var result = new FighterDetails();
-            result.Record = node.CssSelect(".b-content__title-record")
-                .FirstOrDefault()
-                ?.InnerText
-                .Trim();
-            result.Height = info["Height:"];
-            result.Weight = info["Weight:"];
-            result.Reach = info["Reach:"];
-            result.Stance = info["STANCE:"];
-            result.DateOfBirth = info["DOB:"];
-            result.StrikesLandedPerMinute = info["SLpM:"];
-            result.StrikingAccuracy = info["Str. Acc.:"];
-            result.StrikesAbsorbedPerMinute = info["SApM:"];
-            result.StrikeDefence = info["Str. Def:"];
-            result.AverageTakedownsLandedPer15Minutes = info["TD Avg.:"];
-            result.TakedownAccuracy = info["TD Acc.:"];
-            result.TakedownDefense = info["TD Def.:"];
-            result.AverageSugmissionsAttemptedPer15Minutes = info["Sub. Avg.:"];
+            var result = new FighterDetails
+            {
+                Record = node.CssSelect(".b-content__title-record")
+                    .FirstOrDefault()
+                    ?.InnerText
+                    .Trim(),
+                Height = info["Height:"],
+                Weight = info["Weight:"],
+                Reach = info["Reach:"],
+                Stance = info["STANCE:"],
+                DateOfBirth = info["DOB:"],
+                StrikesLandedPerMinute = info["SLpM:"],
+                StrikingAccuracy = info["Str. Acc.:"],
+                StrikesAbsorbedPerMinute = info["SApM:"],
+                StrikeDefence = info["Str. Def:"],
+                AverageTakedownsLandedPer15Minutes = info["TD Avg.:"],
+                TakedownAccuracy = info["TD Acc.:"],
+                TakedownDefense = info["TD Def.:"],
+                AverageSugmissionsAttemptedPer15Minutes = info["Sub. Avg.:"]
+            };
             //result.Fights = node.CssSelect(".b-fight-details__table-body tr")
             //    .Select(ParseFightItem);
             return result;
