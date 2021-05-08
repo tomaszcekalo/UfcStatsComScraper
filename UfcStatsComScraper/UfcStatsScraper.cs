@@ -15,6 +15,7 @@ namespace UfcStatsComScraper
         IEnumerable<EventListItem> ScrapeSearch(string query);
         EventDetails ScrapeEventDetails(string url);
         FightDetails ScrapeFightDetails(string url);
+        FighterDetails ScrapeFighterDetails(string v);
     }
 
     public class UfcStatsScraper : IUfcStatsScraper
@@ -244,6 +245,46 @@ namespace UfcStatsComScraper
                 Href = node.Attributes["href"].Value,
                 Text = node.InnerText.Trim()
             };
+            return result;
+        }
+
+        public FighterDetails ScrapeFighterDetails(string url)
+        {
+            WebPage homePage = _browser.NavigateToPage(new Uri(url));
+            var result = ParseFighterDetails(homePage.Html);
+            return result;
+        }
+        public FighterDetails ParseFighterDetails(HtmlNode node)
+        {
+            var info = node.CssSelect("ul.b-list__box-list li")
+                .Select(x => x.ChildNodes
+                    .Select(y => y.InnerText.Trim())
+                    .Where(y => !string.IsNullOrEmpty(y))
+                    .ToArray())
+                .Where(x=>x.Length>=2)
+                .ToDictionary(x => x[0], x => x[1]);
+
+
+            var result = new FighterDetails();
+            result.Record = node.CssSelect(".b-content__title-record")
+                .FirstOrDefault()
+                ?.InnerText
+                .Trim();
+            result.Height = info["Height:"];
+            result.Weight = info["Weight:"];
+            result.Reach = info["Reach:"];
+            result.Stance = info["STANCE:"];
+            result.DateOfBirth = info["DOB:"];
+            result.StrikesLandedPerMinute = info["SLpM:"];
+            result.StrikingAccuracy = info["Str. Acc.:"];
+            result.StrikesAbsorbedPerMinute = info["SApM:"];
+            result.StrikeDefence = info["Str. Def:"];
+            result.AverageTakedownsLandedPer15Minutes = info["TD Avg.:"];
+            result.TakedownAccuracy = info["TD Acc.:"];
+            result.TakedownDefense = info["TD Def.:"];
+            result.AverageSugmissionsAttemptedPer15Minutes = info["Sub. Avg.:"];
+            //result.Fights = node.CssSelect(".b-fight-details__table-body tr")
+            //    .Select(ParseFightItem);
             return result;
         }
     }
