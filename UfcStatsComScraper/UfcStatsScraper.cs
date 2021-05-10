@@ -207,7 +207,7 @@ namespace UfcStatsComScraper
             result.Fighters = cells[1]
                 .CssSelect("a")
                 .Select(ParseLink);
-            result.MatchupUrl = cells[4]
+            result.MatchupUrl = cells[0]
                 .CssSelect("a")
                 .Select(x => x.Attributes["href"].Value)
                 .FirstOrDefault();
@@ -285,9 +285,11 @@ namespace UfcStatsComScraper
                 TakedownDefense = info["TD Def.:"],
                 AverageSugmissionsAttemptedPer15Minutes = info["Sub. Avg.:"]
             };
-            //result.Fights = node.CssSelect(".b-fight-details__table-body tr")
-            //    .Select(ParseFightItem);
+            result.Fights = node.CssSelect(".b-fight-details__table-body tr")
+                .Where(x => x.ChildNodes.Count > 3)
+                .Select(ParseFightItem);
             return result;
         }
+
     }
 }
