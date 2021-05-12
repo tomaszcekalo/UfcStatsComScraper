@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Tomasz Cekało</Authors>
+    <Company>Tomasz Cekało</Company>
+    <Version>0.0.1</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/tomaszcekalo/UfcStatsComScraper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tomaszcekalo/UfcStatsComScraper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Scraper for http://ufcstats.com/
+
+</Description>
+    <PackageTags>scraper, ufc, stats,</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
