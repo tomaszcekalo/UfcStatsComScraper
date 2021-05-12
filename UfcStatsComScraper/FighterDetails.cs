@@ -12,11 +12,11 @@ namespace UfcStatsComScraper
         public string DateOfBirth { get; set; }
 
         //Career Statistics:
-        public string SignificantStrikesLandedPerMinute { get; set; }
+        public string StrikesLandedPerMinute { get; set; }
 
-        public string SignificantStrikingAccuracy { get; set; }
-        public string SignificantStrikesAbsorbedPerMinute { get; set; }
-        public string SignificantStrikeDefence { get; set; }
+        public string StrikingAccuracy { get; set; }
+        public string StrikesAbsorbedPerMinute { get; set; }
+        public string StrikeDefence { get; set; }
         public string AverageTakedownsLandedPer15Minutes { get; set; }
         public string TakedownAccuracy { get; set; }
         public string TakedownDefense { get; set; }

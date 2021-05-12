@@ -15,6 +15,7 @@ namespace UfcStatsComScraper
         IEnumerable<EventListItem> ScrapeSearch(string query);
         EventDetails ScrapeEventDetails(string url);
         FightDetails ScrapeFightDetails(string url);
+        FighterDetails ScrapeFighterDetails(string v);
     }
 
     public class UfcStatsScraper : IUfcStatsScraper
@@ -206,7 +207,7 @@ namespace UfcStatsComScraper
             result.Fighters = cells[1]
                 .CssSelect("a")
                 .Select(ParseLink);
-            result.MatchupUrl = cells[4]
+            result.MatchupUrl = cells[0]
                 .CssSelect("a")
                 .Select(x => x.Attributes["href"].Value)
                 .FirstOrDefault();
@@ -246,5 +247,49 @@ namespace UfcStatsComScraper
             };
             return result;
         }
+
+        public FighterDetails ScrapeFighterDetails(string url)
+        {
+            WebPage homePage = _browser.NavigateToPage(new Uri(url));
+            var result = ParseFighterDetails(homePage.Html);
+            return result;
+        }
+        public FighterDetails ParseFighterDetails(HtmlNode node)
+        {
+            var info = node.CssSelect("ul.b-list__box-list li")
+                .Select(x => x.ChildNodes
+                    .Select(y => y.InnerText.Trim())
+                    .Where(y => !string.IsNullOrEmpty(y))
+                    .ToArray())
+                .Where(x=>x.Length>=2)
+                .ToDictionary(x => x[0], x => x[1]);
+
+
+            var result = new FighterDetails
+            {
+                Record = node.CssSelect(".b-content__title-record")
+                    .FirstOrDefault()
+                    ?.InnerText
+                    .Trim(),
+                Height = info["Height:"],
+                Weight = info["Weight:"],
+                Reach = info["Reach:"],
+                Stance = info["STANCE:"],
+                DateOfBirth = info["DOB:"],
+                StrikesLandedPerMinute = info["SLpM:"],
+                StrikingAccuracy = info["Str. Acc.:"],
+                StrikesAbsorbedPerMinute = info["SApM:"],
+                StrikeDefence = info["Str. Def:"],
+                AverageTakedownsLandedPer15Minutes = info["TD Avg.:"],
+                TakedownAccuracy = info["TD Acc.:"],
+                TakedownDefense = info["TD Def.:"],
+                AverageSugmissionsAttemptedPer15Minutes = info["Sub. Avg.:"]
+            };
+            result.Fights = node.CssSelect(".b-fight-details__table-body tr")
+                .Where(x => x.ChildNodes.Count > 3)
+                .Select(ParseFightItem);
+            return result;
+        }
+
     }
 }
