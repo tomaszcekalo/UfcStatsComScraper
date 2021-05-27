@@ -13,6 +13,7 @@ namespace UfcStatsComScraper
         public string TimeFormat { get; set; }
         public string Referee { get; set; }
         public string Details { get; set; }
+        public FightMatchup Matchup { get; set; }
         //Totals
         //per round
         //Significant Strikes

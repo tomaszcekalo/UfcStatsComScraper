@@ -152,12 +152,53 @@ namespace UfcStatsComScraper
                     .FirstOrDefault()
                     ?.InnerText
                     .Trim(),
-                Method = content["Method:"],
-                Round = content["Round:"],
-                Time = content["Time:"],
-                TimeFormat = content["Time format:"],
-                Referee = content["Referee:"]
+                Method = content?["Method:"],
+                Round = content?["Round:"],
+                Time = content?["Time:"],
+                TimeFormat = content?["Time format:"],
+                Referee = content?["Referee:"],
+                Matchup = node.CssSelect("section.b-fight-details__section")
+                    .Where(x => HasMatchupLink(x))
+                    .Select(x => ParseMatchup(x))
+                    .FirstOrDefault()
             };
+            var totals = node.CssSelect("section.b-fight-details__section table tbody.b-fight-details__table-body tr.b-fight-details__table-row")
+                .FirstOrDefault();
+            var perRound = node
+                .CssSelect("section.b-fight-details__section table.b-fight-details__table tbody.b-fight-details__table-body tr.b-fight-details__table-row");
+
+
+            var totalsPerRound = perRound
+                //.Where(x => x.ChildNodes.Count == 21
+                .Take(5)
+                .ToList();
+            var significantStrikesPerRounds = perRound
+                //.Where(x => x.ChildNodes.Count == 19)
+                .Skip(5)
+                .Take(5)
+                .ToList();
+
+            return result;
+        }
+
+        public bool HasMatchupLink(HtmlNode node)
+        {
+            //return true;
+            return node.CssSelect("a.b-fight-details__collapse-link").Any(y => y.InnerText.Trim().Equals("Matchup"));
+        }
+
+        public FightMatchup ParseMatchup(HtmlNode node)
+        {
+            var result = new FightMatchup();
+            result.Items = node.CssSelect("table.b-fight-details__table tbody.b-fight-details__table-body tr")
+                .Where(x => x.CssSelect("td").Count() == 3)
+                .Select(x => new
+                {
+                    Key = x.CssSelect("td").Select(td => td.InnerText.Trim()).First(),
+                    Value = x.CssSelect("td").Select(td => td.InnerText.Trim()).Skip(1).ToArray()
+                })
+                .Where(x=>!string.IsNullOrEmpty(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
             return result;
         }
 
