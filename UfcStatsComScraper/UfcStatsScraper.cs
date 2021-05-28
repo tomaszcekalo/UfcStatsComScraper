@@ -167,7 +167,6 @@ namespace UfcStatsComScraper
             var perRound = node
                 .CssSelect("section.b-fight-details__section table.b-fight-details__table tbody.b-fight-details__table-body tr.b-fight-details__table-row");
 
-
             var totalsPerRound = perRound
                 //.Where(x => x.ChildNodes.Count == 21
                 .Take(5)
@@ -178,6 +177,74 @@ namespace UfcStatsComScraper
                 .Take(5)
                 .ToList();
 
+            var fightDetailsCharts = node
+                .CssSelect(".b-fight-details__charts-body .b-fight-details__charts-col-row")
+                .Select(ParseFightDetailsChart)
+                .Take(2);
+            var barChart = node.CssSelect(".b-fight-details__charts-col_pos_right")
+                .Select(ParseBarChart)
+                .FirstOrDefault();
+
+            return result;
+        }
+
+        public FightDetailsChart ParseBarChart(HtmlNode node)
+        {
+            var result = new FightDetailsChart();
+            result.Title = node.CssSelect("h4")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Rows = node.CssSelect(".b-fight-details__bar-charts-row")
+                .Select(ParseFightDetailsBarChartRow);
+            return result;
+        }
+
+        public FightDetailsChartRow ParseFightDetailsBarChartRow(HtmlNode node)
+        {
+            var result = new FightDetailsChartRow();
+            result.Left = node.CssSelect(".b-fight-details__bar-chart-text_style_light-red")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Title = node.CssSelect(".b-fight-details__bar-chart-title")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Right = node.CssSelect(".b-fight-details__bar-chart-text_style_light-blue")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            return result;
+        }
+
+        public FightDetailsChart ParseFightDetailsChart(HtmlNode node)
+        {
+            var result = new FightDetailsChart();
+            result.Title = node.CssSelect("h4")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Rows = node.CssSelect(".b-fight-details__charts-row")
+                .Select(ParseFightDetailsChartRow);
+            return result;
+        }
+
+        public FightDetailsChartRow ParseFightDetailsChartRow(HtmlNode node)
+        {
+            var result = new FightDetailsChartRow();
+            result.Left = node.CssSelect(".b-fight-details__charts-num_pos_left")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Title = node.CssSelect(".b-fight-details__charts-row-title")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
+            result.Right = node.CssSelect(".b-fight-details__charts-num_pos_right")
+                .FirstOrDefault()
+                ?.InnerHtml
+                .Trim();
             return result;
         }
 
@@ -197,7 +264,7 @@ namespace UfcStatsComScraper
                     Key = x.CssSelect("td").Select(td => td.InnerText.Trim()).First(),
                     Value = x.CssSelect("td").Select(td => td.InnerText.Trim()).Skip(1).ToArray()
                 })
-                .Where(x=>!string.IsNullOrEmpty(x.Key))
+                .Where(x => !string.IsNullOrEmpty(x.Key))
                 .ToDictionary(x => x.Key, x => x.Value);
             return result;
         }
@@ -302,9 +369,8 @@ namespace UfcStatsComScraper
                     .Select(y => y.InnerText.Trim())
                     .Where(y => !string.IsNullOrEmpty(y))
                     .ToArray())
-                .Where(x=>x.Length>=2)
+                .Where(x => x.Length >= 2)
                 .ToDictionary(x => x[0], x => x[1]);
-
 
             var result = new FighterDetails
             {
@@ -331,6 +397,5 @@ namespace UfcStatsComScraper
                 .Select(ParseFightItem);
             return result;
         }
-
     }
 }
