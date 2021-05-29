@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using HtmlAgilityPack;
+using System.Collections.Generic;
 
 namespace UfcStatsComScraper
 {
@@ -14,6 +15,10 @@ namespace UfcStatsComScraper
         public string Referee { get; set; }
         public string Details { get; set; }
         public FightMatchup Matchup { get; set; }
+        public FightDetailsChart BarChart { get; set; }
+        public IEnumerable<FightDetailsChart> FightDetailsCharts { get; set; }
+        public IEnumerable<FightDetailsTotals> TotalsPerRound { get; internal set; }
+        public IEnumerable<FightDetailsSignificantStrikes> SignificantStrikesPerRounds { get; internal set; }
         //Totals
         //per round
         //Significant Strikes

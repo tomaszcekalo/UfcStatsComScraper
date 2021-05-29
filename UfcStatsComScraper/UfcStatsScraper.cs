@@ -11,16 +11,22 @@ namespace UfcStatsComScraper
     public interface IUfcStatsScraper
     {
         IEnumerable<EventListItem> ScrapeUpcoming(int? page = null);
+
         IEnumerable<EventListItem> ScrapeCompleted(int? page = null);
+
         IEnumerable<EventListItem> ScrapeSearch(string query);
+
         EventDetails ScrapeEventDetails(string url);
+
         FightDetails ScrapeFightDetails(string url);
-        FighterDetails ScrapeFighterDetails(string v);
+
+        FighterDetails ScrapeFighterDetails(string url);
     }
 
     public class UfcStatsScraper : IUfcStatsScraper
     {
         private readonly ScrapingBrowser _browser;
+
         public UfcStatsScraper()
         {
             _browser = new ScrapingBrowser();
@@ -48,6 +54,7 @@ namespace UfcStatsComScraper
             var result = ParseEventList(homePage.Html);
             return result;
         }
+
         public IEnumerable<EventListItem> ParseEventList(HtmlNode node)
         {
             var result = node.CssSelect(".b-fight-details__table-body tr")
@@ -83,6 +90,7 @@ namespace UfcStatsComScraper
                 .Any();
             return result;
         }
+
         public IEnumerable<EventListItem> ScrapeCompleted(int? page = null)
         {
             string url = Consts.UfcStatsEventsCompleted;
@@ -141,6 +149,10 @@ namespace UfcStatsComScraper
                         .Select(y => y.InnerText.Trim())
                         .LastOrDefault(y => !string.IsNullOrEmpty(y))
                 );
+
+            var perRound = node
+                .CssSelect("section.b-fight-details__section table.b-fight-details__table tbody.b-fight-details__table-body tr.b-fight-details__table-row");
+
             var result = new FightDetails
             {
                 EventLink = node.CssSelect("h2.b-content__title a")
@@ -160,31 +172,69 @@ namespace UfcStatsComScraper
                 Matchup = node.CssSelect("section.b-fight-details__section")
                     .Where(x => HasMatchupLink(x))
                     .Select(x => ParseMatchup(x))
-                    .FirstOrDefault()
+                    .FirstOrDefault(),
+                BarChart = node.CssSelect(".b-fight-details__charts-col_pos_right")
+                    .Select(ParseBarChart)
+                    .FirstOrDefault(),
+                FightDetailsCharts = node
+                    .CssSelect(".b-fight-details__charts-body .b-fight-details__charts-col-row")
+                    .Select(ParseFightDetailsChart)
+                    .Take(2),
+                TotalsPerRound = perRound
+                    //.Where(x => x.ChildNodes.Count == 21
+                    .Take(5)
+                    .Select(ParseTotalsPerRound)
+                    .ToList(),
+                SignificantStrikesPerRounds = perRound
+                    //.Where(x => x.ChildNodes.Count == 19)
+                    .Skip(5)
+                    .Take(5)
+                    .Select(ParseSignificantStrikes)
+                    .ToList()
             };
-            var totals = node.CssSelect("section.b-fight-details__section table tbody.b-fight-details__table-body tr.b-fight-details__table-row")
-                .FirstOrDefault();
-            var perRound = node
-                .CssSelect("section.b-fight-details__section table.b-fight-details__table tbody.b-fight-details__table-body tr.b-fight-details__table-row");
+            return result;
+        }
 
-            var totalsPerRound = perRound
-                //.Where(x => x.ChildNodes.Count == 21
-                .Take(5)
-                .ToList();
-            var significantStrikesPerRounds = perRound
-                //.Where(x => x.ChildNodes.Count == 19)
-                .Skip(5)
-                .Take(5)
-                .ToList();
+        public FightDetailsSignificantStrikes ParseSignificantStrikes(HtmlNode node)
+        {
+            var cells = node.CssSelect("td")
+                .Select(x => x.CssSelect("p")
+                    .Select(y => y.InnerText.Trim()).ToArray())
+                .ToArray();
 
-            var fightDetailsCharts = node
-                .CssSelect(".b-fight-details__charts-body .b-fight-details__charts-col-row")
-                .Select(ParseFightDetailsChart)
-                .Take(2);
-            var barChart = node.CssSelect(".b-fight-details__charts-col_pos_right")
-                .Select(ParseBarChart)
-                .FirstOrDefault();
+            var result = new FightDetailsSignificantStrikes()
+            {
+                SigStr = cells[1],
+                SigStrPerc = cells[2],
+                Head = cells[3],
+                Body = cells[4],
+                Leg = cells[5],
+                Distance = cells[6],
+                Clinch = cells[7],
+                Ground = cells[8]
+            };
 
+            return result;
+        }
+
+        public FightDetailsTotals ParseTotalsPerRound(HtmlNode node)
+        {
+            var cells = node.CssSelect("td")
+                .Select(x => x.CssSelect("p")
+                    .Select(y => y.InnerText.Trim()).ToArray())
+                .ToArray();
+            var result = new FightDetailsTotals
+            {
+                KD = cells[1],
+                SigStr = cells[2],
+                SigStrPerc = cells[3],
+                TotalStr = cells[4],
+                TD = cells[5],
+                TDP = cells[6],
+                SubAtt = cells[7],
+                Rev = cells[8],
+                Ctrl = cells[9]
+            };
             return result;
         }
 
@@ -362,6 +412,7 @@ namespace UfcStatsComScraper
             var result = ParseFighterDetails(homePage.Html);
             return result;
         }
+
         public FighterDetails ParseFighterDetails(HtmlNode node)
         {
             var info = node.CssSelect("ul.b-list__box-list li")
@@ -394,7 +445,8 @@ namespace UfcStatsComScraper
             };
             result.Fights = node.CssSelect(".b-fight-details__table-body tr")
                 .Where(x => x.ChildNodes.Count > 3)
-                .Select(ParseFightItem);
+                .Select(ParseFightItem)
+                .ToList();
             return result;
         }
     }
