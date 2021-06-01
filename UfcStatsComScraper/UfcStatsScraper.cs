@@ -445,6 +445,7 @@ namespace UfcStatsComScraper
             };
             result.Fights = node.CssSelect(".b-fight-details__table-body tr")
                 .Where(x => x.ChildNodes.Count > 3)
+                .Where(x => x.CssSelect("td").Count() >= 10)
                 .Select(ParseFightItem)
                 .ToList();
             return result;
