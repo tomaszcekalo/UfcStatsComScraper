@@ -57,8 +57,9 @@ namespace UfcStatsComScraper
 
         public IEnumerable<EventListItem> ParseEventList(HtmlNode node)
         {
-            var result = node.CssSelect(".b-fight-details__table-body tr")
-                .Select(ParseEventListItem);
+            var result = node.CssSelect("tr.b-statistics__table-row")
+                .Select(ParseEventListItem)
+                .ToList();
             return result;
         }
 
@@ -76,7 +77,8 @@ namespace UfcStatsComScraper
                 .Value;
             result.Name = i?.CssSelect("a")
                 .FirstOrDefault()
-                ?.InnerText;
+                ?.InnerText
+                .Trim();
             result.Date = i?.CssSelect("span")
                 .FirstOrDefault()
                 ?.InnerText

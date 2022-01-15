@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace UfcStatsComScraper.ConsoleExample
 {
@@ -7,8 +8,10 @@ namespace UfcStatsComScraper.ConsoleExample
         private static void Main(string[] args)
         {
             IUfcStatsScraper scraper = new UfcStatsScraper();
-            var upcoming = scraper.ScrapeUpcoming();
-            var completed = scraper.ScrapeCompleted();
+            var upcoming = scraper.ScrapeUpcoming()
+                .Where(x => x.Name!=null);
+            var completed = scraper.ScrapeCompleted()
+                .Where(x => x.Name != null);
             var eventDetailsUpcoming = scraper
                 .ScrapeEventDetails("http://ufcstats.com/event-details/d57e6a8971b6d2bd");
 
