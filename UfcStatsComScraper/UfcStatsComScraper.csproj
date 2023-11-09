@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Tomasz Cekało</Authors>
     <Company>Tomasz Cekało</Company>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/tomaszcekalo/UfcStatsComScraper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomaszcekalo/UfcStatsComScraper</RepositoryUrl>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScrapySharp" Version="3.0.0" />
+    <PackageReference Include="AngleSharp" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace UfcStatsComScraper.ConsoleExample
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             IUfcStatsScraper scraper = new UfcStatsScraper();
-            var upcoming = scraper.ScrapeUpcoming()
-                .Where(x => x.Name!=null);
-            var completed = scraper.ScrapeCompleted()
+            var upcoming = (await scraper.ScrapeUpcoming())
+                .Where(x => x.Name != null);
+            var completed = (await scraper.ScrapeCompleted())
                 .Where(x => x.Name != null);
             var eventDetailsUpcoming = scraper
                 .ScrapeEventDetails("http://ufcstats.com/event-details/d57e6a8971b6d2bd");
